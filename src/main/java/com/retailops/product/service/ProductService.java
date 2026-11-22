@@ -1,6 +1,7 @@
 package com.retailops.product.service;
 
 
+import com.retailops.common.exception.DuplicateSkuException;
 import com.retailops.common.exception.ProductNotFoundException;
 import com.retailops.product.dto.CreateProductRequest;
 import com.retailops.product.dto.ProductResponse;
@@ -21,6 +22,13 @@ public class ProductService {
     }
 
     public ProductResponse createProduct(CreateProductRequest request) {
+
+
+        if (productRepository.existsBySku(request.getSku())) {
+            throw new DuplicateSkuException(
+                    "Product with SKU " + request.getSku() + " already exists"
+            );
+        }
 
         Product product = new Product();
 
@@ -84,6 +92,12 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(
                         "Product not found with id: " + id
                 ));
+
+        if (productRepository.existsBySkuAndIdNot(request.getSku(), id)) {
+            throw new DuplicateSkuException(
+                    "Product with SKU " + request.getSku() + " already exists"
+            );
+        }
 
         existingProduct.setName(request.getName());
         existingProduct.setSku(request.getSku());

@@ -3,6 +3,7 @@ package com.retailops.product.controller;
 import com.retailops.product.dto.CreateProductRequest;
 import com.retailops.product.dto.ProductResponse;
 import com.retailops.product.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class ProductController {
 
     @PostMapping
     public ProductResponse createProduct(
-            @RequestBody CreateProductRequest request) {
+            @Valid @RequestBody CreateProductRequest request) {
 
         return productService.createProduct(request);
     }
@@ -40,7 +41,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ProductResponse updateProduct(
             @PathVariable("id") Long id,
-            @RequestBody CreateProductRequest request) {
+            @Valid @RequestBody CreateProductRequest request) {
 
         return productService.updateProduct(id, request);
     }
