@@ -1,12 +1,13 @@
 package com.retailops.product.controller;
 
-import com.retailops.product.entity.Product;
+import com.retailops.product.dto.CreateProductRequest;
+import com.retailops.product.dto.ProductResponse;
 import com.retailops.product.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 
 @RestController
@@ -20,26 +21,28 @@ public class ProductController {
     }
 
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
+    public ProductResponse createProduct(
+            @RequestBody CreateProductRequest request) {
+
+        return productService.createProduct(request);
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductResponse> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Optional<Product> getProductById(@PathVariable Long id) {
+    public ProductResponse getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 
-    @PostMapping("/{id}")
-    public Product updateProduct(
+    @PutMapping("/{id}")
+    public ProductResponse updateProduct(
             @PathVariable("id") Long id,
-            @RequestBody Product product) {
+            @RequestBody CreateProductRequest request) {
 
-        return productService.updateProduct(id, product);
+        return productService.updateProduct(id, request);
     }
 
 
