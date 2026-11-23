@@ -7,6 +7,8 @@ import com.retailops.product.dto.CreateProductRequest;
 import com.retailops.product.dto.ProductResponse;
 import com.retailops.product.entity.Product;
 import com.retailops.product.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,10 +52,9 @@ public class ProductService {
         return response;
     }
 
-    public List<ProductResponse> getAllProducts() {
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
 
-        return productRepository.findAll()
-                .stream()
+        return productRepository.findAll(pageable)
                 .map(product -> {
                     ProductResponse response = new ProductResponse();
 
@@ -64,8 +65,7 @@ public class ProductService {
                     response.setQuantity(product.getQuantity());
 
                     return response;
-                })
-                .toList();
+                });
     }
 
     public ProductResponse getProductById(Long id) {
@@ -125,5 +125,41 @@ public class ProductService {
                 ));
 
         productRepository.deleteById(id);
+    }
+
+    public Page<ProductResponse> searchProductsByName(
+            String name, Pageable pageable) {
+
+        return productRepository
+                .findByNameContainingIgnoreCase(name, pageable)
+                .map(product -> {
+                    ProductResponse response = new ProductResponse();
+
+                    response.setId(product.getId());
+                    response.setName(product.getName());
+                    response.setSku(product.getSku());
+                    response.setPrice(product.getPrice());
+                    response.setQuantity(product.getQuantity());
+
+                    return response;
+                });
+    }
+
+    public Page<ProductResponse> searchProductsBySku(
+            String sku, Pageable pageable) {
+
+        return productRepository
+                .findBySkuContainingIgnoreCase(sku, pageable)
+                .map(product -> {
+                    ProductResponse response = new ProductResponse();
+
+                    response.setId(product.getId());
+                    response.setName(product.getName());
+                    response.setSku(product.getSku());
+                    response.setPrice(product.getPrice());
+                    response.setQuantity(product.getQuantity());
+
+                    return response;
+                });
     }
 }

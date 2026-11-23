@@ -4,6 +4,10 @@ import com.retailops.product.dto.CreateProductRequest;
 import com.retailops.product.dto.ProductResponse;
 import com.retailops.product.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +33,21 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts() {
-        return productService.getAllProducts();
+    public Page<ProductResponse> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(sortDirection, sortBy)
+        );
+
+        return productService.getAllProducts(pageable);
     }
 
     @GetMapping("/{id}")
@@ -52,6 +69,44 @@ public class ProductController {
         productService.deleteProduct(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public Page<ProductResponse> searchProductsByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(sortDirection, sortBy)
+        );
+
+        return productService.searchProductsByName(name, pageable);
+    }
+
+    @GetMapping("/search/sku")
+    public Page<ProductResponse> searchProductsBySku(
+            @RequestParam String sku,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(sortDirection, sortBy)
+        );
+
+        return productService.searchProductsBySku(sku, pageable);
     }
 
 
