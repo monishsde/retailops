@@ -184,7 +184,7 @@ public class ProductController {
     )
     @ApiResponse(
             responseCode = "200",
-            description = "Products matching the search criteria retrieved successfully"
+            description = "Products matching the search criteria will be retrieved successfully"
     )
     @GetMapping("/search")
     public Page<ProductResponse> searchProductsByName(
